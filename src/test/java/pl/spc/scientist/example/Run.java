@@ -39,7 +39,7 @@ public class Run {
         }
     }
 
-    public String use(String arg) {
+    private String use(String arg) {
         String result = arg;
 
         for (int i = 0; i < 1000; i++) {
@@ -49,7 +49,7 @@ public class Run {
         return result;
     }
 
-    public String test(String arg) {
+    private String test(String arg) {
         StringBuilder builder = new StringBuilder(arg);
         Random random = new Random();
 

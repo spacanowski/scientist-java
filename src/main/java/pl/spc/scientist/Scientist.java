@@ -18,6 +18,15 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.Timer.Context;
 
+/**
+ * Main Scientist that is most commonly used. Registers time metrics of execution for
+ * use and test methods and histogram of fail rate for test method. Fail of test method
+ * is considered when result of use and test methods are different or when test method
+ * throws exception. Both methods are run in random order. All exceptions all test method
+ * will be caught and not propagated. Result of use method will always be returned.
+ * Metrics are registered using {@link io.dropwizard.metrics}. Time metrics are registered
+ * using {@link Timer} and failure rates using {@link Histogram}
+ */
 public final class Scientist {
     private static final String USE_TIMER_BASE_NAME = "use-times";
     private static final String TRY_TIMER_BASE_NAME = "try-times";
@@ -27,6 +36,16 @@ public final class Scientist {
 
     private Scientist() {}
 
+    /**
+     * Run scientist and register metrics of run. Time metrics for use method are
+     * named use-times.{@value name} for test method try-times.{@value name} and
+     * failure rates failures.{@value name}
+     *
+     * @param name of scientist
+     * @param use method that is considered as method currently in use
+     * @param test method that is tested as replacement of use method
+     * @return result of use method
+     */
     public static <T>T run(String name, Supplier<T> use, Supplier<T> test) {
         Histogram failures = metrics.histogram(name(FAILURES_HISTOGRAM_BASE_NAME, name));
         Timer useTimer = metrics.timer(name(USE_TIMER_BASE_NAME, name));
@@ -48,6 +67,11 @@ public final class Scientist {
         return useResult;
     }
 
+    /**
+     * Returns {@link MetricRegistry} used by Scientist. Used for metrics reporter.
+     *
+     * @return {@link MetricRegistry} for scientist
+     */
     public static MetricRegistry getMetrics() {
         return metrics;
     }
