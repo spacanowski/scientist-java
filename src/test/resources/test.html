@@ -34,7 +34,7 @@
                     use = [],
                     test = [],
                     failures = [];
-                    loadFile = function(file, dataset) {
+                    loadFile = function(file, dataset, index) {
                         var reader = new FileReader();
 
                         reader.onload = function(readerEvt) {
@@ -42,7 +42,7 @@
                                 lines = content.split(/\r?\n/);
 
                             for (i = 1; i < lines.length -1; i++)
-                                dataset.push(lines[i].split(",")[3]);
+                                dataset.push(lines[i].split(",")[index]);
                             --toLoad;
 
                             if (toLoad < 1) {
@@ -56,9 +56,9 @@
                         var useBtn = $.find('#use-input')[0],
                         tryBtn = $.find('#try-input')[0],
                         faiBtn = $.find('#failures-input')[0];
-                            loadFile(useBtn, use);
-                            loadFile(tryBtn, test);
-                            loadFile(faiBtn, failures);
+                            loadFile(useBtn, use, 3);
+                            loadFile(tryBtn, test, 3);
+                            loadFile(faiBtn, failures, 3);
                         },
                     show = function(use, test, failures) {
                             var data = {
@@ -85,7 +85,7 @@
                                 ]
                             };
 
-                            var myLineChart = new Chart(ctx).Line(data, {});
+                            var myLineChart = new Chart(ctx).Line(data, {datasetFill:false, pointDot:false, bezierCurve:false});
                         };
 
                 $("#show-btn").click(load);

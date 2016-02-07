@@ -23,6 +23,8 @@ import pl.spc.scientist.Scientist;
  * Example shows chart of mean times and mean failures rate.
  */
 public class Run {
+    private static final Random random = new Random();
+
     public static void main(String[] args) throws InterruptedException {
         final CsvReporter reporter = CsvReporter.forRegistry(Scientist.getMetrics())
                 .formatFor(Locale.US)
@@ -34,27 +36,28 @@ public class Run {
         Run run = new Run();
         String test = "smth";
 
-        for (int i = 0; i < 10000; i++) {
-            Scientist.run("test", () -> run.use(test), () -> run.test(test));
+        for (int i = 0; i < 1000; i++) {
+            final int iterations = random.nextInt(10000);
+
+            Scientist.run("test", () -> run.use(test, iterations), () -> run.test(test, iterations));
         }
     }
 
-    private String use(String arg) {
+    private String use(String arg, int iterations) {
         String result = arg;
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < iterations; i++) {
             result += arg;
         }
 
         return result;
     }
 
-    private String test(String arg) {
+    private String test(String arg, int iterations) {
         StringBuilder builder = new StringBuilder(arg);
-        Random random = new Random();
 
-        for (int i = 0; i < 1000; i++) {
-            if (random.nextInt(1000) != 1) {
+        for (int i = 0; i < iterations; i++) {
+            if (random.nextInt(iterations) != 1) {//if for random failing
                 builder.append(arg);
             }
         }
