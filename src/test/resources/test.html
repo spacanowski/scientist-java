@@ -1,0 +1,95 @@
+<!-- *
+ * ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <spc> wrote this file.  As long as you retain this notice you
+ * can do whatever you want with this stuff. If we meet some day, and you think
+ * this stuff is worth it, you can buy me a beer in return.   spacanowski
+ * ----------------------------------------------------------------------------
+ *-->
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="utf-8">
+        <title>Test</title>
+    </head>
+    <body>
+        <label for="use-input">use</label>
+        <input type="file" id="use-input" placeholder="use"/>
+        <label for="try-input">try</label>
+        <input type="file" id="try-input" placeholder="try"/>
+        <label for="failures-input">failures</label>
+        <input type="file" id="failures-input" placeholder="failures"/>
+        <button id="show-btn">show</button>
+
+        <canvas id="times" width="1000" height="400"></canvas>
+
+        <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                var ctx = document.getElementById("times").getContext("2d");
+
+                var toLoad = 3,
+                    use = [],
+                    test = [],
+                    failures = [];
+                    loadFile = function(file, dataset) {
+                        var reader = new FileReader();
+
+                        reader.onload = function(readerEvt) {
+                            var content = readerEvt.target.result,
+                                lines = content.split(/\r?\n/);
+
+                            for (i = 1; i < lines.length -1; i++)
+                                dataset.push(lines[i].split(",")[3]);
+                            --toLoad;
+
+                            if (toLoad < 1) {
+                                show(use, test, failures);
+                            }
+                        }
+
+                        reader.readAsText(file.files[0]);
+                    },
+                    load = function() {
+                        var useBtn = $.find('#use-input')[0],
+                        tryBtn = $.find('#try-input')[0],
+                        faiBtn = $.find('#failures-input')[0];
+                            loadFile(useBtn, use);
+                            loadFile(tryBtn, test);
+                            loadFile(faiBtn, failures);
+                        },
+                    show = function(use, test, failures) {
+                            var data = {
+                                labels: use,
+                                datasets: [
+                                    {
+                                        label: "use function times",
+                                        strokeColor: "rgba(0,250,0,1)",
+                                        fillColor: "rgba(0,250,0,0.2)",
+                                        data: use
+                                    },
+                                    {
+                                        label: "try function times",
+                                        strokeColor: "rgba(0,0,250,1)",
+                                        fillColor: "rgba(0,0,250,0.2)",
+                                        data: test
+                                    },
+                                    {
+                                        label: "failures",
+                                        strokeColor: "rgba(250,0,0,1)",
+                                        fillColor: "rgba(250,0,0,0.2)",
+                                        data: failures
+                                    }
+                                ]
+                            };
+
+                            var myLineChart = new Chart(ctx).Line(data, {});
+                        };
+
+                $("#show-btn").click(load);
+            });
+        </script>
+    </body>
+</html>
