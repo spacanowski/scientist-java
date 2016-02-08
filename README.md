@@ -1,5 +1,5 @@
 # Scientist for Java
-GitHub Scientist's inspired Scientist for Java
+GitHub [Scientist](https://github.com/github/scientist)'s inspired Scientist for Java
 
 Used for testing critical path replacements.
 
